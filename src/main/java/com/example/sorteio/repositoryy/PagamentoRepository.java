@@ -1,8 +1,8 @@
-package repository;
+package com.example.sorteio.repositoryy;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import models.Pagamento;
+import com.example.sorteio.modelsx.Pagamento;
 
 
 

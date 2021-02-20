@@ -3,10 +3,14 @@ angular
   .controller(
     'PagamentoController',
     
-    function ($location) {
+    
+    function (sorteioService, $scope) {
         
-        
+       
+
  //REPLACE WITH YOUR PUBLIC KEY AVAILABLE IN: https://developers.mercadopago.com/panel/credentials
+
+ var  pagamento = function(){
  window.Mercadopago.setPublishableKey("TEST-95e84925-5fd8-44b9-9e1d-d4e92d7d2f8b");
 
  window.Mercadopago.getIdentificationTypes();
@@ -300,8 +304,40 @@ Swal.fire({
  //Retrieve product description
  document.getElementById('description').value = document.getElementById('product-description').innerHTML;
 
- 
- 
+ var buscaResultado = function(){
+        var data = new Date()
+    if(data =='2021/03/14'){
+
+        sorteioService.resultado().success(function(data){
+
+            $scope.resultado = data;
+            mostrar = 1;
+        }
+        );
+
+
+    }   
+ }
+
+ }
+
+ var mostrar = 0;
+
+ $scope.mostrar = function(){
+
+    if(mostrar === 0)
+
+    return true;
+ }
+
+ $scope.exibe = function(){
+
+    if(mostrar === 1)
+
+    return true;
+ }
+
+
  
 });
  

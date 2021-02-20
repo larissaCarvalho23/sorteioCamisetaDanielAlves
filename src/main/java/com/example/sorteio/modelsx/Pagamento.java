@@ -1,4 +1,4 @@
-package models;
+package com.example.sorteio.modelsx;
 
 import java.util.Date;
 
@@ -21,6 +21,16 @@ public class Pagamento {
 	 private String docNumber;
 	private String email;
 	private String status_pagamento;
+
+	public int getNumeroComprado() {
+		return numeroComprado;
+	}
+
+	public void setNumeroComprado(int numeroComprado) {
+		this.numeroComprado = numeroComprado;
+	}
+
+	private int numeroComprado;
 	
 	
 	

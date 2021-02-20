@@ -1,163 +1,162 @@
 <section class="shopping-cart dark">
-    <div class="container" id="container">
-      <div class="block-heading">
-        <h2>Confirmação de Compra</h2>
-      </div>
-      <div class="content">
-        <div class="row">
-          <div class="col-md-12 col-lg-8">
-            <div class="items">
-              <div class="product">
-                <div class="info">
-                  <div class="product-details">
-                    <div class="row justify-content-md-center">
-                     
-                      <div class="col-md-4 product-detail">
-                        <h5>Produto</h5>
-                        <div class="product-info">
-                          <p><b>Descrição: </b><span id="product-description">Licença Premium</span><br>
-                          <b>Preço:</b> R$ <span id="unit-price">30</span></p>
-                        </div>
+  <div class="container" id="container">
+    <div class="block-heading">
+      <h2>ConfirmaÃ§Ã£o de Compra</h2>
+    </div>
+    <div class="content">
+      <div class="row">
+        <div class="col-md-12 col-lg-8">
+          <div class="items">
+            <div class="product">
+              <div class="info">
+                <div class="product-details">
+                  <div class="row justify-content-md-center">
+                   
+                    <div class="col-md-4 product-detail">
+                      <h5>Produto</h5>
+                      <div class="product-info">
+                        <p><b>DescriÃ§Ã£o: </b><span id="product-description">LicenÃ§a Premium</span><br>
+                        <b>PreÃ§o:</b> R$ <span id="unit-price">30</span></p>
                       </div>
-                         <div class="col-md-3 product-detail" style="display:none">
-                            <label for="quantity"><h5>Quantity</h5></label>
-                            <input type="number" id="quantity" value="1" class="form-control">
-                          </div>
                     </div>
+                       <div class="col-md-3 product-detail" style="display:none">
+                          <label for="quantity"><h5>Quantity</h5></label>
+                          <input type="number" id="quantity" value="1" class="form-control">
+                        </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-12 col-lg-4">
-            <div class="summary">
-              <h3>Sacola de compras</h3>
-              <div class="summary-item"><span class="text">Subtotal: </span><span class="price" id="cart-total"></span>R$30</div>
-              <button class="btn btn-primary btn-lg btn-block" id="checkout-btn">Confirmar</button>
+        </div>
+        <div class="col-md-12 col-lg-4">
+          <div class="summary">
+            <h3>Sacola de compras</h3>
+            <div class="summary-item"><span class="text">Subtotal: </span><span class="price" id="cart-total"></span>R$30</div>
+            <button class="btn btn-primary btn-lg btn-block" id="checkout-btn">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Payment -->
+<section class="payment-form dark">
+  <div class="container_payment">
+    <div class="block-heading">
+      <h2>CartÃ£o de Pagamento</h2>
+      <p>Insira suas informaÃ§Ãµes de pagamento</p>
+    </div>
+    <div class="form-payment">
+      <div class="products">
+        <h2 class="title">Resumo</h3>
+        <div class="item">
+          <span class="price" id="summary-price"></span>
+          <p class="item-name">LicenÃ§a Premium <span id="summary-quantity"></span></p>
+        </div>
+        <div class="total">Total<span class="price" id="summary-total"></span></div>
+      </div>
+      <div class="payment-details">
+        <form action="" method="post" id="paymentForm">
+          <h3 class="title">Forma de Pagamento</h3>
+  <div>
+    <select class="form-control" id="paymentMethod" name="paymentMethod">
+      <option>Selecione uma forma de pagamento</option>
+
+      <!-- Create an option for each payment method with their name and complete the ID in the attribute 'value'. -->
+      <option value="credit_card">CartÃ£o de CrÃ©dito</option>
+      <option value="debit_card">CartÃ£o de DÃ©bito</option>
+      <option value="bolbradesco">Boleto BancÃ¡rio</option>
+    </select>
+  </div>
+  <br>
+            <h3 class="title">Detalhes do Comprador</h3>
+            <div class="row">
+              <div class="form-group col">
+                <label for="email">E-Mail</label>
+                <input id="email" name="email" type="text" class="form-control"></select>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- Payment -->
-  <section class="payment-form dark">
-    <div class="container_payment">
-      <div class="block-heading">
-        <h2>Cartão de Pagamento</h2>
-        <p>Insira suas informações de pagamento</p>
-      </div>
-      <div class="form-payment">
-        <div class="products">
-          <h2 class="title">Resumo</h3>
-          <div class="item">
-            <span class="price" id="summary-price"></span>
-            <p class="item-name">Licença Premium <span id="summary-quantity"></span></p>
-          </div>
-          <div class="total">Total<span class="price" id="summary-total"></span></div>
-        </div>
-        <div class="payment-details">
-          <form action="" method="post" id="paymentForm">
-            <h3 class="title">Forma de Pagamento</h3>
-    <div>
-      <select class="form-control" id="paymentMethod" name="paymentMethod">
-        <option>Selecione uma forma de pagamento</option>
-
-        <!-- Create an option for each payment method with their name and complete the ID in the attribute 'value'. -->
-        <option value="credit_card">Cartão de Crédito</option>
-        <option value="debit_card">Cartão de Débito</option>
-        <option value="bolbradesco">Boleto Bancário</option>
-      </select>
-    </div>
-    <br>
-              <h3 class="title">Detalhes do Comprador</h3>
-              <div class="row">
-                <div class="form-group col">
-                  <label for="email">E-Mail</label>
-                  <input id="email" name="email" type="text" class="form-control"></select>
-                </div>
+            <div class="row">
+              <div class="form-group col-sm-5">
+                <label for="docType">Tipo do Documento</label>
+                <select id="docType" name="docType" data-checkout="docType" type="text" class="form-control">
+                  <option value="CPF">CPF</option>
+                </select>
               </div>
-              <div class="row">
-                <div class="form-group col-sm-5">
-                  <label for="docType">Tipo do Documento</label>
-                  <select id="docType" name="docType" data-checkout="docType" type="text" class="form-control">
-                    <option value="CPF">CPF</option>
-                  </select>
-                </div>
-                <div class="form-group col-sm-7">
-                  <label for="docNumber">Número do Documento</label>
-                  <input id="docNumber" name="docNumber" data-checkout="docNumber" type="text" class="form-control"/>
-                </div>
+              <div class="form-group col-sm-7">
+                <label for="docNumber">NÃºmero do Documento</label>
+                <input id="docNumber" name="docNumber" data-checkout="docNumber" type="text" class="form-control"/>
               </div>
-              <br>
-              <h3 class="title">Informações do Comprador</h3>
-              <div class="row">
+            </div>
+            <br>
+            <h3 class="title">InformaÃ§Ãµes do Comprador</h3>
+            <div class="row">
+            <div class="form-group col-sm-8">
+              <label for="payerFirstName" >Nome</label> 
+              <input id="payerFirstName" name="payerFirstName" type="text" class="form-control">
+            </div>
+            <div class="form-group col-sm-8">
+              <label for="payerLastName" >Sobrenome</label>
+              <input id="payerLastName" name="payerLastName" type="text" class="form-control">
+            </div>
+            </div>
+            <section id="pagamento_cartao">
+            <div class="row">
               <div class="form-group col-sm-8">
-                <label for="payerFirstName" >Nome</label> 
-                <input id="payerFirstName" name="payerFirstName" type="text" class="form-control">
+                <label for="cardholderName">Nome escrito no cartÃ£o</label>
+                <input id="cardholderName" data-checkout="cardholderName" type="text" class="form-control">
               </div>
-              <div class="form-group col-sm-8">
-                <label for="payerLastName" >Sobrenome</label>
-                <input id="payerLastName" name="payerLastName" type="text" class="form-control">
-              </div>
-              </div>
-              <section id="pagamento_cartao">
-              <div class="row">
-                <div class="form-group col-sm-8">
-                  <label for="cardholderName">Nome escrito no cartão</label>
-                  <input id="cardholderName" data-checkout="cardholderName" type="text" class="form-control">
-                </div>
-                <div class="form-group col-sm-4">
-                  <label for="">Data de Expiração</label>
-                  <div class="input-group expiration-date">
-                    <input type="text" class="form-control" placeholder="MM" id="cardExpirationMonth" data-checkout="cardExpirationMonth"
-                      onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
-                    <span class="date-separator">/</span>
-                    <input type="text" class="form-control" placeholder="YY" id="cardExpirationYear" data-checkout="cardExpirationYear"
-                      onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
-                  </div>
-                </div>
-                <div class="form-group col-sm-8">
-                  <label for="cardNumber">Número do Cartão</label>
-                  <input type="text" class="form-control input-background" id="cardNumber" data-checkout="cardNumber"
+              <div class="form-group col-sm-4">
+                <label for="">Data de ExpiraÃ§Ã£o</label>
+                <div class="input-group expiration-date">
+                  <input type="text" class="form-control" placeholder="MM" id="cardExpirationMonth" data-checkout="cardExpirationMonth"
+                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+                  <span class="date-separator">/</span>
+                  <input type="text" class="form-control" placeholder="YY" id="cardExpirationYear" data-checkout="cardExpirationYear"
                     onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
                 </div>
-                <div class="form-group col-sm-4">
-                  <label for="securityCode">CVV</label>
-                  <input id="securityCode" data-checkout="securityCode" type="text" class="form-control"
-                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
-                </div>
-              </section>
-                <div id="issuerInput" class="form-group col-sm-12 hidden">
-                  <label for="issuer">Issuer</label>
-                  <select id="issuer" name="issuer" data-checkout="issuer" class="form-control"></select>
-                </div>
-                <div class="form-group col-sm-12" style="display: none;">
-                  <label for="installments">Installments</label>
-                  <select type="text" id="installments" name="installments" class="form-control">
-                    <option value="1">1</option>
-                  </select>
-                </div>
-                <div class="form-group col-sm-12">
-                  <input type="hidden" name="transactionAmount" id="amount" value="10" />
-                  <input type="hidden" name="paymentMethodId" id="paymentMethodId" value="" />
-                  <input type="hidden" name="description" id="description" />
-                  <br>
-                  <button type="submit" class="btn btn-primary btn-block">Pagar</button>
-                  <br>
-                  <a id="go-back">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" class="chevron-left">
-                      <path fill="#009EE3" fill-rule="nonzero"id="chevron_left" d="M7.05 1.4L6.2.552 1.756 4.997l4.449 4.448.849-.848-3.6-3.6z"></path>
-                    </svg>
-                   Voltar
-                  </a>
-                </div>
               </div>
-          </form>
-        </div>
+              <div class="form-group col-sm-8">
+                <label for="cardNumber">NÃºmero do CartÃ£o</label>
+                <input type="text" class="form-control input-background" id="cardNumber" data-checkout="cardNumber"
+                  onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+              </div>
+              <div class="form-group col-sm-4">
+                <label for="securityCode">CVV</label>
+                <input id="securityCode" data-checkout="securityCode" type="text" class="form-control"
+                  onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+              </div>
+            </section>
+              <div id="issuerInput" class="form-group col-sm-12 hidden">
+                <label for="issuer">Issuer</label>
+                <select id="issuer" name="issuer" data-checkout="issuer" class="form-control"></select>
+              </div>
+              <div class="form-group col-sm-12" style="display: none;">
+                <label for="installments">Installments</label>
+                <select type="text" id="installments" name="installments" class="form-control">
+                  <option value="1">1</option>
+                </select>
+              </div>
+              <div class="form-group col-sm-12">
+                <input type="hidden" name="transactionAmount" id="amount" value="10" />
+                <input type="hidden" name="paymentMethodId" id="paymentMethodId" value="" />
+                <input type="hidden" name="description" id="description" />
+                <br>
+                <button type="submit" class="btn btn-primary btn-block">Pagar</button>
+                <br>
+                <a id="go-back">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10" class="chevron-left">
+                    <path fill="#009EE3" fill-rule="nonzero"id="chevron_left" d="M7.05 1.4L6.2.552 1.756 4.997l4.449 4.448.849-.848-3.6-3.6z"></path>
+                  </svg>
+                 Voltar
+                </a>
+              </div>
+            </div>
+        </form>
       </div>
-      
     </div>
+    
+  </div>
 
-  </section>
-  
+</section>

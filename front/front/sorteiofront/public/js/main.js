@@ -5,7 +5,12 @@ angular
    
     $routeProvider.when("/sorteio", {
       templateUrl: "./view/home.html",
-      controller: "HomeController",
+      controller: "PagamentoController",
+    });
+    
+    $routeProvider.when("/pagamento", {
+      templateUrl: "./view/Pagamento.html",
+      controller: "PagamentoController",
     });
     
   });

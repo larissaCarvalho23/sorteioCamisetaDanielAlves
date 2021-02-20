@@ -1,6 +1,6 @@
-package Forms;
+package com.example.sorteio.forms;
 
-import models.Pagamento;
+import com.example.sorteio.modelsx.Pagamento;
 
 public class PagamentoForms {
 	private float transactionAmount;
