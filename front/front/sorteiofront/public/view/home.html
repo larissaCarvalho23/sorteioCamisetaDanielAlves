@@ -144,25 +144,30 @@ section h2 {
     color: #fdcc52;
   }
 }
-
+/*aqui é a definiçao de cores da home*/
 header.masthead {
   position: relative;
   width: 100%;
   padding-top: 150px;
   padding-bottom: 100px;
   color: white;
-  background: url("../img/bg-pattern.png"), #B22222;
-  background: url("../img/bg-pattern.png"), linear-gradient(to left, #800000, #FA8072);
+ /* background: url("../img/bg-pattern.png"), #006400;*/
+  background: url("../img/bg-pattern.png"), linear-gradient(to left,#32CD32, #00008B,#FFFF00, #006400);
 }
 
 header.masthead .header-content {
   max-width: 500px;
   margin-bottom: 100px;
+  margin-top: 0px;
   text-align: center;
 }
 
 header.masthead .header-content h1 {
   font-size: 30px;
+  font-style:oblique;
+  color: #006400;
+ 
+
 }
 
 header.masthead .device-container {
@@ -313,12 +318,11 @@ section.cta .overlay {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.card{
-
+#video{
    
- position:absolute;
-  margin-top: 60px;
-  right: 50;
+
+  margin-top: 200px;
+  left: 0;
   width: 40%;
   height: 70%;
 
@@ -333,7 +337,7 @@ section.contact h2 {
 }
 
 section.contact h2 i {
-  color: #dd4b39;
+  color: #006400;
 }
 
 section.contact ul.list-social {
@@ -367,11 +371,11 @@ section.contact ul.list-social li.social-facebook a:hover {
 }
 
 section.contact ul.list-social li.social-google-plus a {
-  background-color: #dd4b39;
+  background-color: #006400;
 }
 
 section.contact ul.list-social li.social-google-plus a:hover {
-  background-color: #d73925;
+  background-color: #006400;
 }
 
 footer {
@@ -400,8 +404,8 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
 }
 
 .bg-primary {
-  background: #8B0000;
-  background: linear-gradient(#696969, #FA8072);
+  background: #006400;
+  background: linear-gradient(#696969, #006400);
 }
 
 .text-primary {
@@ -414,9 +418,9 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
 }
 
 .btn-outline {
-  color: white;
+  color: #000080;
   border: 1px solid;
-  border-color: white;
+  border-color: 000080;
 }
 
 .btn-outline:hover, .btn-outline:focus, .btn-outline:active, .btn-outline.active {
@@ -435,6 +439,9 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
 .btn-xl {
   font-size: 11px;
   padding: 15px 45px;
+}
+#botaop{
+  color: #000080;
 }
 </style>
 <!DOCTYPE html>
@@ -482,8 +489,6 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="http://www.cass.org.br/">Quem somos</a>
           </li>
-   
-       
         </ul>
       </div>
     </div>
@@ -494,27 +499,23 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
         <div class="col-lg-7 my-auto " >
           <div class="header-content mx-auto">
             <h1 class="mb-5">Sorteio camiseta autografada pelo jogador Daniel Alves, compre um número e concorra!</h1>
-            <a href="/pagamento" ng-show="mostrar()"class="btn btn-light btn-xl js-scroll-trigger">Comprar Número</a>
+            <a  href="/pagamento" ng-show="mostrar()"class="btn btn-primary btn-xl js-scroll-trigger">
+              Comprar Número
+            </a>
+           
             <div class="" ng-repeat="r in resultato"></div>
             <h2  ng-show="exibe()" >Resultado:{{r}}</h2>
+          </div>        
           </div>
-          </div>
-         
-            
-        
-          <div class="card-deck" style="width: 25rem;">
-            <div class="card">
-              <img class="card-img-top" src="./imagem/daniel.jpg" alt="Imagem de capa do card">
-           
+          <div class="" style="width: 28rem;" id="video" >     
+              <video width="490" height="400" controls >
+                <source src="./video/daniel.mp4" type="video/mp4">       
+              </video>    
             </div>
-
-          
-            </div>
-                     
-            </div>
+            </div-->
        
   </header>
-  <section class="download bg-primary text-center" id="">
+  <!--section class="download bg-primary text-center" id="">
     <div class="container">
       <div class="row">
         <div class="header-content col-md-8 mx-auto">
@@ -530,7 +531,7 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
       </div>
       </div>
     </div>
-    </section>
+    </section-->
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
