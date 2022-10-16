@@ -233,9 +233,27 @@ public class PagamentoForms {
 	
 
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+
+
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+
+
+
+
+
 	public  Pagamento converter() {
 		// TODO Auto-generated method stub
-		return new Pagamento(transactionAmount, token, description ,installments ,paymentMethodId ,docType ,docNumber ,email, status_pagamento,usuarioId);
+		return new Pagamento(transactionAmount, token, description ,installments ,paymentMethodId ,docType ,docNumber ,email, status_pagamento,name,lastname);
 	}
 
 }

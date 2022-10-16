@@ -1,6 +1,5 @@
 package com.example.sorteio.modelsx;
 
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,6 @@ public class Pagamento {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	 private int id;
 	 private int usuarioId;
-	 private Date dataPagamento;
 	 private float transactionAmount;
 	 private String token;
 	 private String description;
@@ -21,6 +19,8 @@ public class Pagamento {
 	 private String docNumber;
 	private String email;
 	private String status_pagamento;
+	private String name;
+	private String lastname;
 
 	public int getNumeroComprado() {
 		return numeroComprado;
@@ -40,11 +40,11 @@ public class Pagamento {
 
 	public Pagamento(float transactionAmount, String token,
 			String description, int installments, String paymentMethodId, String docType, String docNumber,
-			String email, String status_pagamento, int usuarioId) {
+			String email, String status_pagamento, String name, String lastname) {
 		
 		this.id = id;
-		this.usuarioId = usuarioId;
-		this.dataPagamento = dataPagamento;
+		
+		
 		this.transactionAmount = transactionAmount;
 		this.token = token;
 		this.description = description;
@@ -54,6 +54,8 @@ public class Pagamento {
 		this.docNumber = docNumber;
 		this.email = email;
 		this.status_pagamento =status_pagamento;
+		this.name =name;
+		this.lastname =lastname;
 	}
 
 	public int getId() {
@@ -72,13 +74,6 @@ public class Pagamento {
 		this.usuarioId = usuarioId;
 	}
 
-	public Date getDataPagamento() {
-		return dataPagamento;
-	}
-
-	public void setDataPagamento(Date dataPagamento) {
-		this.dataPagamento = dataPagamento;
-	}
 
 	public float getTransactionAmount() {
 		return transactionAmount;
@@ -150,6 +145,22 @@ public class Pagamento {
 
 	public void setStatus_pagamento(String status_pagamento) {
 		this.status_pagamento = status_pagamento;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 

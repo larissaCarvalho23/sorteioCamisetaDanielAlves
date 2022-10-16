@@ -2,27 +2,23 @@
 <!DOCTYPE html>
 <html lang="pt-br" ng-app="Sorteio">
 <head>
-    <script src="">console.log('ola')</script>  <meta charset="UTF-8">
     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <meta name="viewport" content="width=device-width">
     <script src="./js/lib/angular.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
+         
     <link href="./css/bootstrap.min.css"></link>
     <script src="./js/main.js"></script>
    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="./js/controllers/PagamentoController.js"></script>
+   
     <script src="./js/lib/angular-route.min.js"></script>
-
-    <link rel="stylesheet" href="./css/internacionalizacao.css">
-    <script src="./js/utilitarios/internacionalizacao.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="./css/homeEstilo.css"></link>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
             integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -41,14 +37,15 @@
    
     <script src="./js/angular-sanitize/angular-sanitize.min.js"></script>     
    
-    <script src="./js/controllers/InterController.js"></script>
+   
     <script src="./js/services/sorteioService.js"></script>
     <script src="./js/services/PagamentoController.js"></script>
-    <script src="./js/controllers/recoverPassword.js"></script>
-   <script src="./js/controllers/confirmEmailController.js"></script>
+ 
+  
    <!-- <link href="./css/imgs.css"></link>-->
    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
 <!-- js do menu avatar -->
+
 
  
 <!-- <h1>teste</h1> -->
@@ -63,7 +60,15 @@
         </li>
 
     </ul>-->
+</head>
+<body>
+    <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+    <script>
 
+        // Redireciona o usuário para a página da DevMedia após cinco segundos
+        setTimeout(function() {
+            window.location.href = "#/sorteio";
+        }, 100);</script>
 <ng-view>
 </ng-view>
 </body>

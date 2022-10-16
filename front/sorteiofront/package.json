@@ -19,6 +19,7 @@
     "flag-icon-css": "^3.5.0",
     "moment": "^2.29.1",
     "nedb": "^1.1.2",
+    "nodemon": "^2.0.20",
     "sweetalert": "^2.1.2"
   },
   "devDependencies": {

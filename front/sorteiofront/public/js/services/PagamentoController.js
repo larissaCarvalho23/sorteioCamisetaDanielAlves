@@ -11,9 +11,9 @@ angular
       //REPLACE WITH YOUR PUBLIC KEY AVAILABLE IN: https://developers.mercadopago.com/panel/credentials
     
 
- // window.Mercadopago.setPublishableKey("TEST-95e84925-5fd8-44b9-9e1d-d4e92d7d2f8b");
+  window.Mercadopago.setPublishableKey("TEST-95e84925-5fd8-44b9-9e1d-d4e92d7d2f8b");
  
-  //window.Mercadopago.getIdentificationTypes();
+  window.Mercadopago.getIdentificationTypes();
     
   document.getElementById('cardNumber').addEventListener('change', guessPaymentMethod);
   document.getElementById('paymentMethod').addEventListener('change', AtribuirPagamento);
@@ -138,7 +138,7 @@ angular
       event.preventDefault();
       if(!doSubmit){
           let $form = document.getElementById('paymentForm');
-          if(document.getElementById('paymentMethod').value.includes('card')){
+          if(document.getElementById('paymentMethod').value.toUpperCase().includes('CARD')){
           window.Mercadopago.createToken($form, setCardTokenAndPay);
           }
      else{PaytoBoleto()}
@@ -163,7 +163,7 @@ angular
           var http = new XMLHttpRequest();
           var url = 'http://localhost:8080/process_payment';
          
-          var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=30&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Licença+Premium&email='+document.querySelector('#email').value+'&token='+document.getElementsByName('token')[0].value+'&idUsuario='+sessionStorage.getItem('id');
+          var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Licença+Premium&email='+document.querySelector('#email').value+'&token='+document.getElementsByName('token')[0].value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value;
           console.log(params)
           http.open('POST', url, true);
           
@@ -172,7 +172,7 @@ angular
           
           http.onreadystatechange = function() {//Call a function when the state changes.
               if(http.readyState == 4 && http.status == 200) {
-                  if(http.response.includes('Approved')){
+                  if(http.response.toUpperCase().includes('APPROVED')){
                  Swal.fire({
                      title: 'Seu pagamento foi aprovado com sucesso',
                      icon: 'success',
@@ -292,7 +292,7 @@ angular
       let unitPrice = document.getElementById('unit-price').innerHTML;
       let amount = parseInt(unitPrice) * parseInt(quantity);
   
-      document.getElementById('cart-total').innerHTML = '$ ' + amount;
+      document.getElementById('cart-total').innerHTML = 'R$' + amount;
       document.getElementById('summary-price').innerHTML = '$ ' + unitPrice;
       document.getElementById('summary-quantity').innerHTML = quantity;
       document.getElementById('summary-total').innerHTML = '$ ' + amount;

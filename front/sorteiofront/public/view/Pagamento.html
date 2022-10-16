@@ -411,8 +411,8 @@ footer p a:hover {
                     <div class="col-md-4 product-detail">
                       <h5>Produto</h5>
                       <div class="product-info">
-                        <p><b>Descrição: </b><span id="product-description">Licença Premium</span><br>
-                        <b>Preço:</b> R$ <span id="unit-price">30</span></p>
+                        <p><b>Descrição: </b><span id="product-description">Número do Sorteio</span><br>
+                        <b>Preço:</b> R$ <span id="unit-price">20</span></p>
                       </div>
                     </div>
                        <div class="col-md-3 product-detail" style="display:none">
@@ -428,8 +428,7 @@ footer p a:hover {
         <div class="col-md-12 col-lg-4">
           <div class="summary">
             <h3>Sacola de compras</h3>
-            <div class="summary-item"><span class="text">Subtotal: </span><span class="price" 
-              id="cart-total"></span>R$30</div>
+            <div class="summary-item"><span class="text">Subtotal: </span><span class="price"id="cart-total"></span></div>
             <button class="btn btn-primary btn-lg btn-block" id="checkout-btn">Confirmar</button>
           </div>
         </div>
@@ -449,7 +448,7 @@ footer p a:hover {
         <h2 class="title">Resumo</h3>
         <div class="item">
           <span class="price" id="summary-price"></span>
-          <p class="item-name">Licença Premium <span id="summary-quantity"></span></p>
+          <p class="item-name">Número do Sorteio <span id="summary-quantity"></span></p>
         </div>
         <div class="total">Total<span class="price" id="summary-total"></span></div>
       </div>
@@ -498,6 +497,15 @@ footer p a:hover {
               <input id="payerLastName" name="payerLastName" type="text" class="form-control">
             </div>
             </div>
+            <section id="endereco">
+              <div class="row">
+                <div class="form-group col-sm-8">
+                  <label for="cardholderRuaName">Telefone</label>
+                  <input id="cardholderRuaName" data-checkout="cardholderRuaName" type="text" class="form-control" placeholder="+888 (88)8888-8888">
+                </div>
+                
+              
+              </section>
             <section id="pagamento_cartao">
             <div class="row">
               <div class="form-group col-sm-8">
@@ -508,21 +516,21 @@ footer p a:hover {
                 <label for="">Data de Expiração</label>
                 <div class="input-group expiration-date">
                   <input type="text" class="form-control" placeholder="MM" id="cardExpirationMonth" data-checkout="cardExpirationMonth"
-                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=on>
                   <span class="date-separator">/</span>
                   <input type="text" class="form-control" placeholder="YY" id="cardExpirationYear" data-checkout="cardExpirationYear"
-                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+                    onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=on>
                 </div>
               </div>
               <div class="form-group col-sm-8">
                 <label for="cardNumber">Número do Cartão</label>
                 <input type="text" class="form-control input-background" id="cardNumber" data-checkout="cardNumber"
-                  onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+                  onselectstart="return false" onpaste="return true" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=on>
               </div>
               <div class="form-group col-sm-4">
                 <label for="securityCode">CVV</label>
                 <input id="securityCode" data-checkout="securityCode" type="text" class="form-control"
-                  onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=off>
+                  onselectstart="return false" onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false" autocomplete=on>
               </div>
             </section>
               <div id="issuerInput" class="form-group col-sm-12 hidden">

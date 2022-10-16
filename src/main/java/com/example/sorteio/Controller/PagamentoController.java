@@ -1,5 +1,6 @@
 package com.example.sorteio.Controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,12 +37,11 @@ public class PagamentoController {
 
 	@PostMapping
 	public String pagamento(@Valid PagamentoForms pagamentoForms) throws MPConfException, MPRestException {
-
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		LocalDateTime now = LocalDateTime.now();
-
+		
+	
 		MercadoPago.SDK.setAccessToken("TEST-7026030396368846-021617-96e37e8b59344581cfa84f73e1d30e4b-653173414");
-		//System.out.println(MercadoPago.SDK.Get("/v1/payment_methods").getStringResponse());
+		
+		//Object payment_methods = MercadoPago.SDK.Get("/v1/payment_methods");
 		Payment payment = new Payment();
 		payment.setTransactionAmount(pagamentoForms.getTransactionAmount()).setToken(pagamentoForms.getToken())
 				.setDescription(pagamentoForms.getToken()).setInstallments(pagamentoForms.getInstallments())
@@ -70,7 +70,6 @@ public class PagamentoController {
 				Pagamento savePagamento = pagamentoForms.converter();
 				savePagamento.setNumeroComprado(numeroSorteio);
 				savePagamento.setStatus_pagamento(payment.getStatusDetail());
-				// savePagamento.setDataPagamento(Date.now());
 				pagamentoRepository.save(savePagamento);
 				return payment.getTransactionDetails().getExternalResourceUrl();
 
@@ -80,17 +79,17 @@ public class PagamentoController {
 				e.printStackTrace();
 				return "Erro ou processar boleto, tente mais tarde";
 			}
-			// return payment.getCallbackUrl();
+		
 		}
-		if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER") || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")|| payment.getPaymentMethodId().toString().toUpperCase().contains("American")) {
+		if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER") || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")|| payment.getPaymentMethodId().toString().toUpperCase().contains("AMEX")) {
 			try {
 				payment.save();
-				if (payment.getStatus().toString().toLowerCase() == "approved") {
+				if (payment.getStatus().toString().toLowerCase().contains("approved")) {
 					int numeroSorteio = RetornaNumeroSorteado();
 					Pagamento savePagamento = pagamentoForms.converter();
 					savePagamento.setNumeroComprado(numeroSorteio);
 					savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
-					// savePagamento.setDataPagamento(Date.now());
+				
 					pagamentoRepository.save(savePagamento);
 					return payment.getStatus().toString();
 				} else {
