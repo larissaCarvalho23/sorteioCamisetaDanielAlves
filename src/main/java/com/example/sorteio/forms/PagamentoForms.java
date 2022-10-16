@@ -12,6 +12,28 @@ public class PagamentoForms {
 	private String docNumber;
 	private String email;
 	private String status_pagamento;
+	private String name;
+	private String lastname;
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+
+
+
+	public String getLastname() {
+		return lastname;
+	}
+
+
+
+
+
 	private int usuarioId;
 	
 	

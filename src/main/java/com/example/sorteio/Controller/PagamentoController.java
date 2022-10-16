@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ import com.mercadopago.resources.datastructures.payment.Payer;
 import com.example.sorteio.forms.PagamentoForms;
 import com.example.sorteio.modelsx.Pagamento;
 import com.example.sorteio.repositoryy.PagamentoRepository;
-
+@CrossOrigin(origins = "http://localhost:5000")
 @RestController
 @RequestMapping("/process_payment")
 public class PagamentoController {
@@ -51,8 +52,8 @@ public class PagamentoController {
 
 		Payer payer = new Payer();
 		payer.setEmail(pagamentoForms.getEmail()).setIdentification(identification);
-		payer.setFirstName("Raphael");
-		payer.setLastName("Ptta");
+		payer.setFirstName(pagamentoForms.getName());
+		payer.setLastName(pagamentoForms.getLastname());
 		payer.setAddress(new Address()
 				.setZipCode("06233200")
 				.setStreetName("Av. das Nações Unidas")
@@ -62,7 +63,7 @@ public class PagamentoController {
 				.setFederalUnit("SP"));
 		payment.setPayer(payer);
 
-		if (payment.getPaymentMethodId().contains("bolbradesco")) {
+		if (payment.getPaymentMethodId().toString().contains("bolbradesco")) {
 			try {
 				payment.save();
 				int numeroSorteio = RetornaNumeroSorteado();
@@ -81,7 +82,7 @@ public class PagamentoController {
 			}
 			// return payment.getCallbackUrl();
 		}
-		if (payment.getPaymentMethodId().contains("card")) {
+		if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER") || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")|| payment.getPaymentMethodId().toString().toUpperCase().contains("American")) {
 			try {
 				payment.save();
 				if (payment.getStatus().toString().toLowerCase() == "approved") {
@@ -113,7 +114,7 @@ public class PagamentoController {
 		Boolean salvaNumero = false;
 		int valorGerado = 0;
 
-		if (numerojaSorteado != null) {
+		if (!numerojaSorteado.isEmpty()) {
 			while (salvaNumero == false) {
 				Random random = new Random();
 				for (Pagamento dado : numerojaSorteado) {
