@@ -4,15 +4,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
 import com.google.common.collect.Lists;
+import configuracao.emailConfig;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.*;
 
 import com.mercadopago.MercadoPago;
 import com.mercadopago.exceptions.MPConfException;
@@ -30,133 +33,156 @@ import com.example.sorteio.repositoryy.PagamentoRepository;
 @RestController
 @RequestMapping("/process_payment")
 public class PagamentoController {
-	@Autowired
-	PagamentoRepository pagamentoRepository;
-
-	@PostMapping
-	public String pagamento(@Valid PagamentoForms pagamentoForms) throws MPConfException, MPRestException {
-
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		LocalDateTime now = LocalDateTime.now();
-
-		MercadoPago.SDK.setAccessToken("TEST-7026030396368846-021617-96e37e8b59344581cfa84f73e1d30e4b-653173414");
-		//System.out.println(MercadoPago.SDK.Get("/v1/payment_methods").getStringResponse());
-		Payment payment = new Payment();
-		payment.setTransactionAmount(pagamentoForms.getTransactionAmount()).setToken(pagamentoForms.getToken())
-				.setDescription(pagamentoForms.getToken()).setInstallments(pagamentoForms.getInstallments())
-				.setPaymentMethodId(pagamentoForms.getPaymentMethodId());
-
-		Identification identification = new Identification();
-		identification.setType(pagamentoForms.getDocType()).setNumber(pagamentoForms.getDocNumber());
-
-		Payer payer = new Payer();
-		payer.setEmail(pagamentoForms.getEmail()).setIdentification(identification);
-		payer.setFirstName("Raphael");
-		payer.setLastName("Ptta");
-		payer.setAddress(new Address()
-				.setZipCode("06233200")
-				.setStreetName("Av. das Nações Unidas")
-				.setStreetNumber(3003)
-				.setNeighborhood("Bonfim")
-				.setCity("Osasco")
-				.setFederalUnit("SP"));
-		payment.setPayer(payer);
-
-		if (payment.getPaymentMethodId().contains("bolbradesco")) {
-			try {
-				payment.save();
-				int numeroSorteio = RetornaNumeroSorteado();
-				Pagamento savePagamento = pagamentoForms.converter();
-				savePagamento.setNumeroComprado(numeroSorteio);
-				savePagamento.setStatus_pagamento(payment.getStatusDetail());
-				// savePagamento.setDataPagamento(Date.now());
-				pagamentoRepository.save(savePagamento);
-				return payment.getTransactionDetails().getExternalResourceUrl();
+    @Autowired
+    PagamentoRepository pagamentoRepository;
 
 
-			} catch (MPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "Erro ou processar boleto, tente mais tarde";
-			}
-			// return payment.getCallbackUrl();
-		}
-		if (payment.getPaymentMethodId().contains("card")) {
-			try {
-				payment.save();
-				if (payment.getStatus().toString().toLowerCase() == "approved") {
-					int numeroSorteio = RetornaNumeroSorteado();
-					Pagamento savePagamento = pagamentoForms.converter();
-					savePagamento.setNumeroComprado(numeroSorteio);
-					savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
-					// savePagamento.setDataPagamento(Date.now());
-					pagamentoRepository.save(savePagamento);
-					return payment.getStatus().toString();
-				} else {
-					return payment.getStatus().toString();
-				}
+    @PostMapping
+    public String pagamento(@Valid PagamentoForms pagamentoForms) throws MPConfException, MPRestException {
 
-			} catch (MPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// return payment.getCallbackUrl();
-		}
-		return "Método de Pagamento não identificado";
-	}
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
 
-	@GetMapping
-	public int RetornaNumeroSorteado() {
+        MercadoPago.SDK.setAccessToken("TEST-7026030396368846-021617-96e37e8b59344581cfa84f73e1d30e4b-653173414");
+        //System.out.println(MercadoPago.SDK.Get("/v1/payment_methods").getStringResponse());
+        Payment payment = new Payment();
+        payment.setTransactionAmount(pagamentoForms.getTransactionAmount()).setToken(pagamentoForms.getToken())
+                .setDescription(pagamentoForms.getToken()).setInstallments(pagamentoForms.getInstallments())
+                .setPaymentMethodId(pagamentoForms.getPaymentMethodId());
 
-		List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+        Identification identification = new Identification();
+        identification.setType(pagamentoForms.getDocType()).setNumber(pagamentoForms.getDocNumber());
 
-		Boolean salvaNumero = false;
-		int valorGerado = 0;
+        Payer payer = new Payer();
+        payer.setEmail(pagamentoForms.getEmail()).setIdentification(identification);
+        payer.setFirstName("Raphael");
+        payer.setLastName("Ptta");
+        payer.setAddress(new Address()
+                .setZipCode("06233200")
+                .setStreetName("Av. das Nações Unidas")
+                .setStreetNumber(3003)
+                .setNeighborhood("Bonfim")
+                .setCity("Osasco")
+                .setFederalUnit("SP"));
+        payment.setPayer(payer);
 
-		if (numerojaSorteado != null) {
-			while (salvaNumero == false) {
-				Random random = new Random();
-				for (Pagamento dado : numerojaSorteado) {
-					if (dado.getNumeroComprado() != random.nextInt()) {
-						salvaNumero = true;
-						valorGerado = random.nextInt();
-					}
-				}
-			}
-			return valorGerado;
-		} else {
-			Random random = new Random();
-			return random.nextInt();
-		}
+        if (payment.getPaymentMethodId().contains("bolbradesco")) {
+            try {
+                payment.save();
+                int numeroSorteio = RetornaNumeroSorteado();
+                Pagamento savePagamento = pagamentoForms.converter();
+                savePagamento.setNumeroComprado(numeroSorteio);
+                savePagamento.setStatus_pagamento(payment.getStatusDetail());
+                // savePagamento.setDataPagamento(Date.now());
+                pagamentoRepository.save(savePagamento);
+                return payment.getTransactionDetails().getExternalResourceUrl();
 
-	}
 
-	@GetMapping("/resultado")
-	public int ResultadoSorteio() {
+            } catch (MPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return "Erro ou processar boleto, tente mais tarde";
+            }
+            // return payment.getCallbackUrl();
+        }
+        if (payment.getPaymentMethodId().contains("card")) {
+            try {
+                payment.save();
+                if (payment.getStatus().toString().toLowerCase() == "approved") {
+                    int numeroSorteio = RetornaNumeroSorteado();
+                    Pagamento savePagamento = pagamentoForms.converter();
+                    savePagamento.setNumeroComprado(numeroSorteio);
+                    savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
+                    // savePagamento.setDataPagamento(Date.now());
+                    pagamentoRepository.save(savePagamento);
+					enviaEmail(savePagamento.getEmail(),savePagamento.getNumeroComprado());
+                    return payment.getStatus().toString();
+                } else {
+                    return payment.getStatus().toString();
+                }
 
-		//List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+            } catch (MPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            // return payment.getCallbackUrl();
+        }
+        return "Método de Pagamento não identificado";
+    }
+
+    @GetMapping
+    public int RetornaNumeroSorteado() {
+
+        List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+
+        Boolean salvaNumero = false;
+        int valorGerado = 0;
+
+        if (numerojaSorteado != null) {
+            while (salvaNumero == false) {
+                Random random = new Random();
+                for (Pagamento dado : numerojaSorteado) {
+                    if (dado.getNumeroComprado() != random.nextInt()) {
+                        salvaNumero = true;
+                        valorGerado = random.nextInt();
+                    }
+                }
+            }
+            return valorGerado;
+        } else {
+            Random random = new Random();
+            return random.nextInt();
+        }
+
+    }
+
+    @GetMapping("/resultado")
+    public int ResultadoSorteio() {
+
+        //List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
 		/*List<Integer> numerojaSorteado = Lists.newArrayList(1, 2, 3, 4, 5, 6);
 
 		Random random = new Random(numerojaSorteado.size());
 
 		return random.nextInt();*/
-		List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+        List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
 
-		Boolean salvaNumero = false;
-		int valorGerado = 0;
+        Boolean salvaNumero = false;
+        int valorGerado = 0;
 
-			while (salvaNumero == false) {
-				Random random = new Random();
-				for (Pagamento dado : numerojaSorteado) {
-					if (dado.getNumeroComprado() == random.nextInt()) {
-						salvaNumero = true;
-						valorGerado = random.nextInt();
-					}
-				}
-			}
-			return valorGerado;
-		}
+        while (salvaNumero == false) {
+            Random random = new Random();
+            for (Pagamento dado : numerojaSorteado) {
+                if (dado.getNumeroComprado() == random.nextInt()) {
+                    salvaNumero = true;
+                    valorGerado = random.nextInt();
+                }
+            }
+        }
+        return valorGerado;
+    }
 
+    @PostMapping
+    public ResponseEntity enviaEmail(@RequestBody String emailusuario, int numero ) {
+        JavaMailSender mailSender;
+        emailConfig em = new emailConfig();
+        mailSender = em.mailSender();
+        // emailRepository.save(emailUsuario);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            String text = "Olá" +emailusuario+ "o seu número de sorteio é o" +numero+ "valendo uma camiseta autografada pelo jogador " +
+					"Daniel Alves ";
+            message.setText(text);
+            message.setTo(emailusuario);
+            message.setFrom("larissacarvalho887@gmail.com");
+            message.setSubject("Sorteio Camiseta Daniel Alves");
+            mailSender.send(message);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
 
 
