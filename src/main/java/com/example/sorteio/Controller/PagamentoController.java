@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
+import com.example.sorteio.modelsx.DadosUusario;
 import com.google.common.collect.Lists;
 import configuracao.emailConfig;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class PagamentoController {
 
 
     @PostMapping
-    public String pagamento(@Valid PagamentoForms pagamentoForms) throws MPConfException, MPRestException {
+    public String pagamento(@Valid PagamentoForms pagamentoForms) throws Exception {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -94,8 +95,11 @@ public class PagamentoController {
                     savePagamento.setNumeroComprado(numeroSorteio);
                     savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
                     // savePagamento.setDataPagamento(Date.now());
+                    DadosUusario dadosUusario = new DadosUusario();
+                    dadosUusario.setEmailUsuario(savePagamento.getEmail());
+                    dadosUusario.setNumero(numeroSorteio);
                     pagamentoRepository.save(savePagamento);
-					enviaEmail(savePagamento.getEmail(),savePagamento.getNumeroComprado());
+                    enviaEmail(dadosUusario);
                     return payment.getStatus().toString();
                 } else {
                     return payment.getStatus().toString();
@@ -162,25 +166,184 @@ public class PagamentoController {
         return valorGerado;
     }
 
-    @PostMapping
-    public ResponseEntity enviaEmail(@RequestBody String emailusuario, int numero ) {
+    @PostMapping("/email")
+    public ResponseEntity enviaEmail(@RequestBody DadosUusario dadosUusario) throws Exception {
         JavaMailSender mailSender;
         emailConfig em = new emailConfig();
         mailSender = em.mailSender();
         // emailRepository.save(emailUsuario);
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            String text = "Olá" +emailusuario+ "o seu número de sorteio é o" +numero+ "valendo uma camiseta autografada pelo jogador " +
-					"Daniel Alves ";
+                String text = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
+                    "<html xmlns:v=\"urn:schemas-microsoft-com:vml\">\n" +
+                    "\n" +
+                    "<head>\n" +
+                    "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n" +
+                    "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0;\" />\n" +
+                    "    <!--[if !mso]--><!-- -->\n" +
+                    "    <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel=\"stylesheet\">\n" +
+                    "    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel=\"stylesheet\">\n" +
+                    "    <!--<![endif]-->\n" +
+                    "\n" +
+                    "    <title>Myhero Training</title>\n" +
+                    "\n" +
+                    "    <style type=\"text/css\">\n" +
+                    "        body {\n" +
+                    "            width: 100%;\n" +
+                    "            background-color: #ffffff;\n" +
+                    "            margin: 0;\n" +
+                    "            padding: 0;\n" +
+                    "            -webkit-font-smoothing: antialiased;\n" +
+                    "            mso-margin-top-alt: 0px;\n" +
+                    "            mso-margin-bottom-alt: 0px;\n" +
+                    "            mso-padding-alt: 0px 0px 0px 0px;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        p,\n" +
+                    "        h1,\n" +
+                    "        h2,\n" +
+                    "        h3,\n" +
+                    "        h4 {\n" +
+                    "            margin-top: 0;\n" +
+                    "            margin-bottom: 0;\n" +
+                    "            padding-top: 0;\n" +
+                    "            padding-bottom: 0;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        span.preheader {\n" +
+                    "            display: none;\n" +
+                    "            font-size: 1px;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        html {\n" +
+                    "            width: 100%;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        table {\n" +
+                    "            font-size: 14px;\n" +
+                    "            border: 0;\n" +
+                    "        }\n" +
+                    "        /* ----------- responsivity ----------- */\n" +
+                    "\n" +
+                    "        @media only screen and (max-width: 640px) {\n" +
+                    "            /*------ top header ------ */\n" +
+                    "            .main-header {\n" +
+                    "                font-size: 20px !important;\n" +
+                    "            }\n" +
+                    "            .main-section-header {\n" +
+                    "                font-size: 28px !important;\n" +
+                    "            }\n" +
+                    "            .show {\n" +
+                    "                display: block !important;\n" +
+                    "            }\n" +
+                    "            .hide {\n" +
+                    "                display: none !important;\n" +
+                    "            }\n" +
+                    "            .align-center {\n" +
+                    "                text-align: center !important;\n" +
+                    "            }\n" +
+                    "            .no-bg {\n" +
+                    "                background: none !important;\n" +
+                    "            }\n" +
+                    "            /*----- main image -------*/\n" +
+                    "            .main-image img {\n" +
+                    "                width: 440px !important;\n" +
+                    "                height: auto !important;\n" +
+                    "            }\n" +
+                    "            /* ====== divider ====== */\n" +
+                    "            .divider img {\n" +
+                    "                width: 440px !important;\n" +
+                    "            }\n" +
+                    "            /*-------- container --------*/\n" +
+                    "            .container590 {\n" +
+                    "                width: 440px !important;\n" +
+                    "            }\n" +
+                    "            .container580 {\n" +
+                    "                width: 400px !important;\n" +
+                    "            }\n" +
+                    "            .main-button {\n" +
+                    "                width: 220px !important;\n" +
+                    "            }\n" +
+                    "            /*-------- secions ----------*/\n" +
+                    "            .section-img img {\n" +
+                    "                width: 320px !important;\n" +
+                    "                height: auto !important;\n" +
+                    "            }\n" +
+                    "            .team-img img {\n" +
+                    "                width: 100% !important;\n" +
+                    "                height: auto !important;\n" +
+                    "            }\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        @media only screen and (max-width: 479px) {\n" +
+                    "            /*------ top header ------ */\n" +
+                    "            .main-header {\n" +
+                    "                font-size: 18px !important;\n" +
+                    "            }\n" +
+                    "            .main-section-header {\n" +
+                    "                font-size: 26px !important;\n" +
+                    "            }\n" +
+                    "            /* ====== divider ====== */\n" +
+                    "            .divider img {\n" +
+                    "                width: 280px !important;\n" +
+                    "            }\n" +
+                    "            /*-------- container --------*/\n" +
+                    "            .container590 {\n" +
+                    "                width: 280px !important;\n" +
+                    "            }\n" +
+                    "            .container590 {\n" +
+                    "                width: 280px !important;\n" +
+                    "            }\n" +
+                    "            .container580 {\n" +
+                    "                width: 260px !important;\n" +
+                    "            }\n" +
+                    "            /*-------- secions ----------*/\n" +
+                    "            .section-img img {\n" +
+                    "                width: 280px !important;\n" +
+                    "                height: auto !important;\n" +
+                    "            }\n" +
+                    "        }\n" +
+                    "    </style>\n" +
+                    "    <!--[if gte mso 9]><style type=”text/css”>\n" +
+                    "        body {\n" +
+                    "        font-family: arial, sans-serif!important;\n" +
+                    "        }\n" +
+                    "        </style>\n" +
+                    "    <![endif]-->\n" +
+                    "</head>\n" +
+                    "\n" +
+                    "\n" +
+                    "<body class=\"respond\" leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\">\n" +
+                    "    <!-- pre-header -->\n" +
+                    "    <table style=\"display:none!important;\">\n" +
+                    "        <tr>\n" +
+                    "            <td>\n" +
+                    "                <div style=\"overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;\">\n"+
+                    "                Olá " + dadosUusario.emailUsuario + " o seu número de sorteio é o "  + dadosUusario.numero + " valendo uma camiseta autografada pelo jogador Daniel Alves\n" +
+                                     "Desejamos boa sorte!!!"+
+                    "                </div>\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "    </table>\n" +
+                    "    <!-- pre-header end -->\n" +
+                    "    <!-- header -->\n" +
+
+                    "    <!-- end footer ====== -->\n" +
+                    "\n" +
+                    "</body>\n" +
+                    "\n" +
+                    "</html>";
+
             message.setText(text);
-            message.setTo(emailusuario);
-            message.setFrom("larissacarvalho887@gmail.com");
+            message.setTo(dadosUusario.emailUsuario);
+            message.setFrom("laiscarvalhoo00@gmail.com");
             message.setSubject("Sorteio Camiseta Daniel Alves");
             mailSender.send(message);
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            throw new Exception("erro" + e.getMessage());
         }
     }
 }

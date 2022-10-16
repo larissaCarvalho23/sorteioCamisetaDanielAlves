@@ -25,7 +25,6 @@ public class emailConfig {
         props.put("mail.smtp.connectiontimeout", 10000);
         props.put("mail.teste-connection", true);
 
-
         mailSender.setJavaMailProperties(props);
 
         return mailSender;
