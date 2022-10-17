@@ -45,8 +45,19 @@
 		<dependency>
 			<groupId> com.mercadopago </groupId>
 			<artifactId> sdk-java </artifactId>
-			<version> 1.8.0 </version>
+			<version> 1.9.0 </version>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/org.json/json -->
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+<dependency>
+	<groupId>org.apache.httpcomponents</groupId>
+	<artifactId>httpclient</artifactId>
+</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
 		<dependency>
@@ -57,6 +68,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.24</version>
 		</dependency>
 
 

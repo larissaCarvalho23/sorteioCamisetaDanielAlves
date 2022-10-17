@@ -17,6 +17,7 @@
     "bootstrap": "^4.5.0",
     "express": "^4.12.3",
     "flag-icon-css": "^3.5.0",
+    "jquery": "^3.6.1",
     "moment": "^2.29.1",
     "nedb": "^1.1.2",
     "nodemon": "^2.0.20",

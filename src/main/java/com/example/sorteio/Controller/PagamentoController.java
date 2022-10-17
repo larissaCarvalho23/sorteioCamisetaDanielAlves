@@ -1,16 +1,31 @@
 package com.example.sorteio.Controller;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.example.sorteio.forms.PagamentoForms;
 import com.example.sorteio.modelsx.DadosUusario;
 import com.example.sorteio.modelsx.Pagamento;
 import com.example.sorteio.repositoryy.PagamentoRepository;
+import com.google.common.net.HttpHeaders;
 import com.mercadopago.MercadoPago;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.Payment;
 import com.mercadopago.resources.datastructures.payment.Address;
 import com.mercadopago.resources.datastructures.payment.Identification;
 import com.mercadopago.resources.datastructures.payment.Payer;
+
+import ch.qos.logback.core.net.server.Client;
 import configuracao.emailConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,118 +33,183 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.net.http.HttpClient;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
 @CrossOrigin(origins = "http://localhost:5000")
 @RestController
 @RequestMapping("/process_payment")
 public class PagamentoController {
 
-	@Autowired
-	PagamentoRepository pagamentoRepository;
+    @Autowired
+    PagamentoRepository pagamentoRepository;
 
-	@PostMapping
-	public String pagamento(@Valid PagamentoForms pagamentoForms) throws Exception {
-		
-	
-		MercadoPago.SDK.setAccessToken("TEST-7026030396368846-021617-96e37e8b59344581cfa84f73e1d30e4b-653173414");
-		
-		//Object payment_methods = MercadoPago.SDK.Get("/v1/payment_methods");
-		Payment payment = new Payment();
-		payment.setTransactionAmount(pagamentoForms.getTransactionAmount()).setToken(pagamentoForms.getToken())
-				.setDescription(pagamentoForms.getToken()).setInstallments(pagamentoForms.getInstallments())
-				.setPaymentMethodId(pagamentoForms.getPaymentMethodId());
+    @PostMapping
+    public String pagamento(@Valid PagamentoForms pagamentoForms) throws Exception {
 
-		Identification identification = new Identification();
-		identification.setType(pagamentoForms.getDocType()).setNumber(pagamentoForms.getDocNumber());
+        MercadoPago.SDK.setAccessToken("TEST-3209866243427991-101516-9ab38146753d03668d94d996f62007cb-211142859");
+        
+        // Object payment_methods = MercadoPago.SDK.Get("/v1/payment_methods");
+        Payment payment = new Payment();
+        payment.setTransactionAmount(pagamentoForms.getTransactionAmount()).setToken(pagamentoForms.getToken())
+                .setDescription(pagamentoForms.getToken()).setInstallments(pagamentoForms.getInstallments())
+                .setPaymentMethodId(pagamentoForms.getPaymentMethodId());
+        
+        Identification identification = new Identification();
+        identification.setType(pagamentoForms.getDocType()).setNumber(pagamentoForms.getDocNumber());
 
-		Payer payer = new Payer();
-		payer.setEmail(pagamentoForms.getEmail()).setIdentification(identification);
-		payer.setFirstName(pagamentoForms.getName());
-		payer.setLastName(pagamentoForms.getLastname());
-		payer.setAddress(new Address()
-				.setZipCode("06233200")
-				.setStreetName("Av. das Nações Unidas")
-				.setStreetNumber(3003)
-				.setNeighborhood("Bonfim")
-				.setCity("Osasco")
-				.setFederalUnit("SP"));
-		payment.setPayer(payer);
+        Payer payer = new Payer();
+        payer.setEmail(pagamentoForms.getEmail()).setIdentification(identification);
+        payer.setFirstName(pagamentoForms.getName());
+        payer.setLastName(pagamentoForms.getLastname());
+        payer.setAddress(new Address()
+                .setZipCode("06233200")
+                .setStreetName("Av. das Nações Unidas")
+                .setStreetNumber(3003)
+                .setNeighborhood("Bonfim")
+                .setCity("Osasco")
+                .setFederalUnit("SP"));
+        payment.setPayer(payer);
+        
 
-		if (payment.getPaymentMethodId().toString().contains("bolbradesco")) {
-			try {
-				payment.save();
-				int numeroSorteio = RetornaNumeroSorteado();
-				Pagamento savePagamento = pagamentoForms.converter();
-				savePagamento.setNumeroComprado(numeroSorteio);
-				savePagamento.setStatus_pagamento(payment.getStatusDetail());
-                DadosUusario dadosUusario = new DadosUusario();
-                dadosUusario.setNumero(numeroSorteio);
-                dadosUusario.setEmailUsuario(savePagamento.getEmail());
-                enviaEmail(dadosUusario);
-				pagamentoRepository.save(savePagamento);
-				return payment.getTransactionDetails().getExternalResourceUrl();
+        if (payment.getPaymentMethodId().toString().contains("pix")) {
+            try {
+                String Answer ="";
+                  payment.save();
+                  int numeroSorteio = RetornaNumeroSorteado();
+                  Pagamento savePagamento = pagamentoForms.converter();
+                  savePagamento.setNumeroComprado(numeroSorteio);
+                  savePagamento.setStatus_pagamento(payment.getStatusDetail());
+                  DadosUusario dadosUusario = new DadosUusario();
+                  dadosUusario.setNumero(numeroSorteio);
+                  dadosUusario.setEmailUsuario(savePagamento.getEmail());
+                 
+                  pagamentoRepository.save(savePagamento);
+                  CloseableHttpClient httpClient = HttpClients.createDefault();
+                  HttpGet request = new HttpGet("https://api.mercadopago.com/v1/payments/"+payment.getId()+"");
 
+                  // add request headers
+                  request.addHeader("Authorization", "Bearer TEST-3209866243427991-101516-9ab38146753d03668d94d996f62007cb-211142859");
+                  request.addHeader("Content-Type", "application/json");
+          
+                  try (CloseableHttpResponse response = httpClient.execute(request)) {
+          
+                      // Get HttpResponse Status
+                      System.out.println(response.getStatusLine().toString());
+          
+                      HttpEntity entity = response.getEntity();
+                      Header headers = entity.getContentType();
+                      System.out.println(headers);
+          
+                      if (entity != null) {
+                          // return it as a String
+                          String result = EntityUtils.toString(entity);
+                          //System.out.println(result);
 
-			} catch (MPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "Erro ou processar boleto, tente mais tarde";
-			}
-		
-		}
-		if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER") || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")|| payment.getPaymentMethodId().toString().toUpperCase().contains("AMEX")) {
-			try {
-				payment.save();
-				if (payment.getStatus().toString().toLowerCase().contains("approved")) {
-					int numeroSorteio = RetornaNumeroSorteado();
-					Pagamento savePagamento = pagamentoForms.converter();
-					savePagamento.setNumeroComprado(numeroSorteio);
-					savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
-				
-					pagamentoRepository.save(savePagamento);
-					return payment.getStatus().toString();
-				} else {
-					return payment.getStatus().toString();
-				}
+                          try {
+                            JSONObject jsonObject = new JSONObject( "{results: ["+result+"]}");
+                            
+                           
+                            JSONArray jsonArray = jsonObject.getJSONArray("results");
+                            JSONObject explrObject;
+                            
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                explrObject = jsonArray.getJSONObject(i);
+                                Answer=explrObject.get("point_of_interaction").toString();
+                            }
+                            
+                            
+                       }catch (JSONException err){
+                           System.out.println(err);
+                           return "Erro ao Processar o pix";
+                       }
+                      }
+          
+                  }
+          
+                  
+                 return Answer;
+                 
 
-			} catch (MPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// return payment.getCallbackUrl();
-		}
-		return "Método de Pagamento não identificado";
-	}
+               
+                
 
-	@GetMapping
-	public int RetornaNumeroSorteado() {
+            } catch (MPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return "Erro ou processar boleto, tente mais tarde";
+            }
 
-		List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+        }
+        if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER")
+                || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")
+                || payment.getPaymentMethodId().toString().toUpperCase().contains("AMEX")
+                || payment.getPaymentMethodId().toString().toUpperCase().contains("ELO")) {
+            try {
+                payment.save();
+                if (payment.getStatus() != null && payment.getStatus().toString().toLowerCase().contains("approved")) {
+                    int numeroSorteio = RetornaNumeroSorteado();
+                    Pagamento savePagamento = pagamentoForms.converter();
+                    savePagamento.setNumeroComprado(numeroSorteio);
+                    savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
 
-		Boolean salvaNumero = false;
-		int valorGerado = 0;
+                    pagamentoRepository.save(savePagamento);
 
-		if (!numerojaSorteado.isEmpty()) {
-			while (salvaNumero == false) {
-				Random random = new Random();
-				for (Pagamento dado : numerojaSorteado) {
-					if (dado.getNumeroComprado() != random.nextInt()) {
-						salvaNumero = true;
-						valorGerado = random.nextInt();
-					}
-				}
-			}
-			return valorGerado;
-		} else {
-			Random random = new Random();
-			return random.nextInt();
-		}
+                    // cria um JSONArray e preenche com valores string
+                    JSONObject my_obj = new JSONObject();
 
-	}
+                    my_obj.put("numero", numeroSorteio);
+                    my_obj.put("status", payment.getStatus().toString());
 
+                    // serializa para uma string e imprime
 
-      @PostMapping("/email")
+                    return my_obj.toString();
+                } else {
+                    return payment.getStatus().toString();
+                }
+
+            } catch (MPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+                return e.getMessage();
+            }
+            // return payment.getCallbackUrl();
+        }
+        return "Método de Pagamento não identificado";
+    }
+
+    @GetMapping
+    public int RetornaNumeroSorteado() {
+
+        List<Pagamento> numerojaSorteado = pagamentoRepository.findAll();
+
+        Boolean salvaNumero = false;
+        int valorGerado = 0;
+
+        if (!numerojaSorteado.isEmpty()) {
+            while (salvaNumero == false) {
+                Random random = new Random();
+                for (Pagamento dado : numerojaSorteado) {
+                    if (dado.getNumeroComprado() != random.nextInt()) {
+                        salvaNumero = true;
+                        valorGerado = random.nextInt();
+                    }
+                }
+            }
+            return valorGerado;
+        } else {
+            Random random = new Random();
+            return random.nextInt();
+        }
+
+    }
+
+    @PostMapping("/email")
     public ResponseEntity enviaEmail(@RequestBody DadosUusario dadosUusario) throws Exception {
         JavaMailSender mailSender;
         emailConfig em = new emailConfig();
@@ -137,15 +217,19 @@ public class PagamentoController {
         // emailRepository.save(emailUsuario);
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-                String text = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
+            String text = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+                    +
                     "<html xmlns:v=\"urn:schemas-microsoft-com:vml\">\n" +
                     "\n" +
                     "<head>\n" +
                     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n" +
-                    "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0;\" />\n" +
+                    "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0;\" />\n"
+                    +
                     "    <!--[if !mso]--><!-- -->\n" +
-                    "    <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel=\"stylesheet\">\n" +
-                    "    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel=\"stylesheet\">\n" +
+                    "    <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel=\"stylesheet\">\n"
+                    +
+                    "    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel=\"stylesheet\">\n"
+                    +
                     "    <!--<![endif]-->\n" +
                     "\n" +
                     "    <title>Myhero Training</title>\n" +
@@ -281,9 +365,11 @@ public class PagamentoController {
                     "    <table style=\"display:none!important;\">\n" +
                     "        <tr>\n" +
                     "            <td>\n" +
-                    "                <div style=\"overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;\">\n"+
-                    "                Olá " + dadosUusario.emailUsuario + " o seu número de sorteio é o "  + dadosUusario.numero + " valendo uma camiseta autografada pelo jogador Daniel Alves\n" +
-                                     "Desejamos boa sorte!!!"+
+                    "                <div style=\"overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;\">\n"
+                    +
+                    "                Olá " + dadosUusario.emailUsuario + " o seu número de sorteio é o "
+                    + dadosUusario.numero + " valendo uma camiseta autografada pelo jogador Daniel Alves\n" +
+                    "Desejamos boa sorte!!!" +
                     "                </div>\n" +
                     "            </td>\n" +
                     "        </tr>\n" +
@@ -310,14 +396,3 @@ public class PagamentoController {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
