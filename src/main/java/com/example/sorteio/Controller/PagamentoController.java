@@ -30,9 +30,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.internet.MimeUtility;
 import javax.validation.Valid;
+import javax.mail.Part;
+
+import javax.mail.Message;
+
+import javax.mail.internet.MimePart;
+
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import java.net.http.HttpClient;
 import java.util.HashMap;
@@ -50,6 +60,7 @@ public class PagamentoController {
 
     @PostMapping
     public String pagamento(@Valid PagamentoForms pagamentoForms) throws Exception {
+
 
         MercadoPago.SDK.setAccessToken("TEST-3209866243427991-101516-9ab38146753d03668d94d996f62007cb-211142859");
         
@@ -140,8 +151,8 @@ public class PagamentoController {
 
             } catch (MPException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
-                return "Erro ou processar boleto, tente mais tarde";
+             
+                return "Erro ao Processar o pix";
             }
 
         }
@@ -164,24 +175,15 @@ public class PagamentoController {
 
                     my_obj.put("numero", numeroSorteio);
                     my_obj.put("status", payment.getStatus().toString());
-
-                    // serializa para uma string e imprime
-
-                    return my_obj.toString();
-                } else {
-                    return payment.getStatus().toString();
                 }
-
             } catch (MPException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-
-                return e.getMessage();
+                return "Erro ou processar pagamento, tente mais tarde";
             }
-            // return payment.getCallbackUrl();
+
         }
-        return "Método de Pagamento não identificado";
-    }
+   
 
     @GetMapping
     public int RetornaNumeroSorteado() {
@@ -214,25 +216,26 @@ public class PagamentoController {
         JavaMailSender mailSender;
         emailConfig em = new emailConfig();
         mailSender = em.mailSender();
-        // emailRepository.save(emailUsuario);
+   
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            String text = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-                    +
+
+            MimeMessage mime = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mime, true);
+            helper.setFrom("larissacarvalho887@gmail.com");
+            helper.setTo(dadosUusario.emailUsuario);
+            helper.setSubject("Sorteio Jogador Daniel Alves");
+            String htmlText = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
                     "<html xmlns:v=\"urn:schemas-microsoft-com:vml\">\n" +
                     "\n" +
                     "<head>\n" +
                     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n" +
-                    "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0;\" />\n"
-                    +
+                    "    <meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0;\" />\n" +
                     "    <!--[if !mso]--><!-- -->\n" +
-                    "    <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel=\"stylesheet\">\n"
-                    +
-                    "    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel=\"stylesheet\">\n"
-                    +
+                    "    <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel=\"stylesheet\">\n" +
+                    "    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel=\"stylesheet\">\n" +
                     "    <!--<![endif]-->\n" +
                     "\n" +
-                    "    <title>Myhero Training</title>\n" +
+                    "    <title>Sorteio Jogador Daniel Alves</title>\n" +
                     "\n" +
                     "    <style type=\"text/css\">\n" +
                     "        body {\n" +
@@ -362,32 +365,108 @@ public class PagamentoController {
                     "\n" +
                     "<body class=\"respond\" leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\">\n" +
                     "    <!-- pre-header -->\n" +
-                    "    <table style=\"display:none!important;\">\n" +
+                    "    <!-- pre-header end -->\n" +
+                    "    <!-- header -->\n" +
+                    "    <table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"ffffff\">\n" +
+                    "\n" +
                     "        <tr>\n" +
-                    "            <td>\n" +
-                    "                <div style=\"overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;\">\n"
-                    +
-                    "                Olá " + dadosUusario.emailUsuario + " o seu número de sorteio é o "
-                    + dadosUusario.numero + " valendo uma camiseta autografada pelo jogador Daniel Alves\n" +
-                    "Desejamos boa sorte!!!" +
-                    "                </div>\n" +
+                    "            <td align=\"center\">\n" +
+                    "                <table border=\"0\" align=\"center\" width=\"590\" cellpadding=\"0\" cellspacing=\"0\" class=\"container590\">\n" +
+                    "\n" +
+                    "                    <tr>\n" +
+                    "                        <td height=\"25\" style=\"font-size: 25px; line-height: 25px;\">&nbsp;</td>\n" +
+                    "                    </tr>\n" +
+                    "\n" +
+                    "                    <tr>\n" +
+                    "                        <td align=\"center\">\n" +
+                    "\n" +
+                    "                            <table border=\"0\" align=\"center\" width=\"590\" cellpadding=\"0\" cellspacing=\"0\" class=\"container590\">\n" +
+                    "\n" +
+                    "                                <tr>\n" +
+                    "                                    <td align=\"center\" height=\"70\" style=\"height:70px;\">\n" +
+                    "									  <a href=\"\"  style=\"color: #312c32; text-decoration: none;font-size: 25px;\"><strong>Sorteio Daniel Alves</strong></a>\n" +
+                    "                                     \n" +
+                    "                                </tr>\n" +
+                    "\n" +
+                    "                                <tr>\n" +
+                    "                                    <td align=\"center\">\n" +
+                    "                                        <table width=\"360 \" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;\"\n" +
+                    "                                            class=\"container590 hide\">\n" +
+                    "                                            <tr>\n" +
+                    "                                                <td width=\"120\" align=\"center\" style=\"font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;\">\n" +
+                    "                                                    <a href=\"\" style=\"color: #312c32; text-decoration: none;\"></a>\n" +
+                    "                                                </td>\n" +
+                    "                                                <td width=\"120\" align=\"center\" style=\"font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;\">\n" +
+                    "                                                    <a href=\"\" style=\"color: #312c32; text-decoration: none;\"></a>\n" +
+                    "                                                </td>\n" +
+                    "                                                \n" +
+                    "                                            </tr>\n" +
+                    "                                        </table>\n" +
+                    "                                    </td>\n" +
+                    "                                </tr>\n" +
+                    "                            </table>\n" +
+                    "                        </td>\n" +
+                    "                    </tr>\n" +
+                    "\n" +
+                    "                    <tr>\n" +
+                    "                        <td height=\"25\" style=\"font-size: 25px; line-height: 25px;\">&nbsp;</td>\n" +
+                    "                    </tr>\n" +
+                    "\n" +
+                    "                </table>\n" +
                     "            </td>\n" +
                     "        </tr>\n" +
                     "    </table>\n" +
-                    "    <!-- pre-header end -->\n" +
-                    "    <!-- header -->\n" +
-
-                    "    <!-- end footer ====== -->\n" +
+                    "    <!-- end header -->\n" +
+                    "\n" +
+                    "    <!-- big image section -->\n" +
+                    "\n" +
+                    "    <table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"ffffff\" class=\"bg_color\">\n" +
+                    "\n" +
+                    "        <tr>\n" +
+                    "            <td align=\"center\">\n" +
+                    "                <table border=\"0\" align=\"center\" width=\"590\" cellpadding=\"0\" cellspacing=\"0\" class=\"container590\">\n" +
+                    "\n" +
+                    "                    <tr>\n" +
+                    "                        <td align=\"center\" style=\"color: #343434; font-size: 24px; font-family: Quicksand, Calibri, sans-serif; font-weight:700;letter-spacing: 3px; line-height: 35px;\"\n" +
+                    "                            class=\"main-header\">\n" +
+                    "                            <!-- section text ======-->\n" +
+                    "\n" +
+                    "                            <div style=\"line-height: 35px\">\n" +
+                    "\n" +
+                    "                               Olá " + dadosUusario.emailUsuario + " seu número de sorteio é o " + dadosUusario.numero + " valendo uma camiseta autografada pelo Daniel Alves" +
+                    " <span style=\"color: #5caad2;\"> Boa Sorte!! </span>\n " +
+                    "\n" +
+                    "                            </div>\n" +
+                    "                        </td>\n" +
+                    "                    </tr>\n" +
+                    "\n" +
+                    "                                        <p style=\"line-height: 24px\">\n" +
+                    "                                            Atenciosamente,</br>\n" +
+                    "                                           Equipe Daniel Alves\n" +
+                    "                                        </p>\n" +
+                    "\n" +
+                    "                                    </td>\n" +
+                    "                                </tr>\n" +
+                    "                            </table>\n" +
+                    "                        </td>\n" +
+                    "                    </tr>\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "                </table>\n" +
+                    "\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
                     "\n" +
                     "</body>\n" +
                     "\n" +
                     "</html>";
 
-            message.setText(text);
-            message.setTo(dadosUusario.emailUsuario);
-            message.setFrom("laiscarvalhoo00@gmail.com");
-            message.setSubject("Sorteio Camiseta Daniel Alves");
-            mailSender.send(message);
+            helper.setText(htmlText, true);
+            mailSender.send(mime);
+
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
