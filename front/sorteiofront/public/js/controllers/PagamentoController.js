@@ -11,9 +11,9 @@ angular
       //REPLACE WITH YOUR PUBLIC KEY AVAILABLE IN: https://developers.mercadopago.com/panel/credentials
     
 
-  window.Mercadopago.setPublishableKey("TEST-c686ac08-486c-4aaf-95fa-d206d7e416e7");
+  //window.Mercadopago.setPublishableKey("TEST-c686ac08-486c-4aaf-95fa-d206d7e416e7");
   
- 
+  window.Mercadopago.setPublishableKey("APP_USR-f8ac5363-b040-4618-b748-1e4a079c3fe7");
   window.Mercadopago.getIdentificationTypes();
     
   document.getElementById('cardNumber').addEventListener('change', guessPaymentMethod);
@@ -168,10 +168,10 @@ angular
          console.log(form);
           
           var http = new XMLHttpRequest();
-          var url = 'http://localhost:8080/process_payment';
-         
-          var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Licença+Premium&email='+document.querySelector('#email').value+'&token='+document.getElementsByName('token')[0].value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value;
-          console.log(params)
+          var url = 'https://sorteiodanialves.herokuapp.com/process_payment';
+          var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Numero+Sorteio&email='+document.querySelector('#email').value+'&idUsuario='+sessionStorage.getItem('id')+'&token='+document.getElementsByName('token')[0].value+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value+'&telefone='+document.querySelector('#cardholdertelefone').value+'&id_transacao=0';
+
+          console.log(params);
           http.open('POST', url, true);
           
           //Send the proper header information along with the request
@@ -179,9 +179,10 @@ angular
           
           http.onreadystatechange = function() {//Call a function when the state changes.
               if(http.readyState == 4 && http.status == 200) {
-                let obj = JSON.parse(http.response)
+               
 
                   if(http.response.toUpperCase().includes('APPROVED')){
+                    let obj = JSON.parse(http.response)
                  Swal.fire({
                      title: 'Seu pagamento foi aprovado com sucesso',
                      icon: 'success',
@@ -194,7 +195,7 @@ angular
                    }).then((result) => {
                      /* Read more about isConfirmed, isDenied below */
                      if (result.isConfirmed) {
-                         location.replace('#/sorteio')
+                        window.location.href="#/sorteio";
                      } else if (result.isDenied) {
                        Swal.fire('Changes are not saved', '', 'info')
                      }
@@ -206,7 +207,7 @@ angular
                          title: 'Seu pagamento foi recusado',
                          icon: 'error',
                         
-                         text:`Valide suas informações de pagamento`,
+                         text:`Valide suas informações de pagamento e tente mais tarde`,
                          
                          showConfirmButton:true,
                          confirmButtonText: `Ok`,
@@ -214,7 +215,7 @@ angular
                        }).then((result) => {
                          /* Read more about isConfirmed, isDenied below */
                          if (result.isConfirmed) {
-                             //location.replace('#/home')
+                            window.location.href="#/sorteio";
                          } else if (result.isDenied) {
                            Swal.fire('Changes are not saved', '', 'info')
                          }
@@ -224,7 +225,28 @@ angular
                   
               }
           
-          
+              let timerInterval
+              Swal.fire({
+                title: 'Aguarde o processamento!',
+                html: 'Processo  finalizará em <b></b> segundos.',
+                timer: 10000,
+                timerProgressBar: true,
+                didOpen: () => {
+                  Swal.showLoading()
+                  const b = Swal.getHtmlContainer().querySelector('b')
+                  timerInterval = setInterval(() => {
+                    b.textContent = Swal.getTimerLeft()/1000
+                  }, 100)
+                },
+                willClose: () => {
+                  clearInterval(timerInterval)
+                }
+              }).then((result) => {
+                /* Read more about handling dismissals below */
+                if (result.dismiss === Swal.DismissReason.timer) {
+                  console.log('I was closed by the timer')
+                }
+              })
           http.send(params);
  
  
@@ -239,9 +261,8 @@ angular
   function PaytoPix(){
     
      var http = new XMLHttpRequest();
-     var url = 'http://localhost:8080/process_payment';
-    
-     var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Numero+Sorteio&email='+document.querySelector('#email').value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value;
+     var url = 'https://sorteiodanialves.herokuapp.com/process_payment';
+     var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Numero+Sorteio&email='+document.querySelector('#email').value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value+'&telefone='+document.querySelector('#cardholdertelefone').value+'&id_transacao=0';
 
      http.open('POST', url, true);
      
@@ -298,7 +319,7 @@ image.src = `data:image/png;base64,${JSON.parse(http.responseText).transaction_d
      Swal.fire({
        title: 'Aguarde o processamento!',
        html: 'Processo  finalizará em <b></b> segundos.',
-       timer: 6000,
+       timer: 10000,
        timerProgressBar: true,
        didOpen: () => {
          Swal.showLoading()
@@ -328,10 +349,10 @@ image.src = `data:image/png;base64,${JSON.parse(http.responseText).transaction_d
   }
   function SendPixtoback(){
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/process_payment';
+    var url = 'https://sorteiodanialves.herokuapp.com/process_payment';
    
-    var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Numero+Sorteio&email='+document.querySelector('#email').value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value;
-
+    var params = 'docType='+ document.querySelector('#docType').value+'&docNumber='+document.querySelector('#docNumber').value+'&installments=1&transactionAmount=20&paymentMethodId='+document.querySelector('#paymentMethodId').value+'&description=Numero+Sorteio&email='+document.querySelector('#email').value+'&idUsuario='+sessionStorage.getItem('id')+'&name='+document.querySelector('#payerFirstName').value+'&lastname='+document.querySelector('#payerLastName').value+'&id_transacao=0';
+    
     http.open('POST', url, true);
     
     //Send the proper header information along with the request

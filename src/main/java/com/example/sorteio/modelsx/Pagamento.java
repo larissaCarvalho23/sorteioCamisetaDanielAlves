@@ -21,6 +21,16 @@ public class Pagamento {
 	private String status_pagamento;
 	private String name;
 	private String lastname;
+	private String telefone;
+	private String id_transacao;
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
 
 	public int getNumeroComprado() {
 		return numeroComprado;
@@ -40,7 +50,7 @@ public class Pagamento {
 
 	public Pagamento(float transactionAmount, String token,
 			String description, int installments, String paymentMethodId, String docType, String docNumber,
-			String email, String status_pagamento, String name, String lastname) {
+			String email, String status_pagamento, String name, String lastname,  String telefone, String id_transacao) {
 		
 		this.id = id;
 		
@@ -56,6 +66,8 @@ public class Pagamento {
 		this.status_pagamento =status_pagamento;
 		this.name =name;
 		this.lastname =lastname;
+		this.telefone = telefone;
+		this.id_transacao= id_transacao;
 	}
 
 	public int getId() {
@@ -161,6 +173,14 @@ public class Pagamento {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
+	}
+
+	public String getId_transacao() {
+		return id_transacao;
+	}
+
+	public void setId_transacao(String id_transacao) {
+		this.id_transacao = id_transacao;
 	}
 
 

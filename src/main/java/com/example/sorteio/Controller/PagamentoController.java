@@ -50,19 +50,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@CrossOrigin(origins = "http://localhost:5000")
+@CrossOrigin(origins = "https://danielalvessorteios.herokuapp.com")
 @RestController
 @RequestMapping("/process_payment")
 public class PagamentoController {
 
     @Autowired
     PagamentoRepository pagamentoRepository;
-
     @PostMapping
     public String pagamento(@Valid PagamentoForms pagamentoForms) throws Exception {
 
 
-        MercadoPago.SDK.setAccessToken("TEST-3209866243427991-101516-9ab38146753d03668d94d996f62007cb-211142859");
+        
+        MercadoPago.SDK.setAccessToken("APP_USR-3463030374526538-022318-f50ce6994e1dc084d9287755a691bb7b-717750861");
         
         // Object payment_methods = MercadoPago.SDK.Get("/v1/payment_methods");
         Payment payment = new Payment();
@@ -91,15 +91,7 @@ public class PagamentoController {
             try {
                 String Answer ="";
                   payment.save();
-                  int numeroSorteio = RetornaNumeroSorteado();
-                  Pagamento savePagamento = pagamentoForms.converter();
-                  savePagamento.setNumeroComprado(numeroSorteio);
-                  savePagamento.setStatus_pagamento(payment.getStatusDetail());
-                  DadosUusario dadosUusario = new DadosUusario();
-                  dadosUusario.setNumero(numeroSorteio);
-                  dadosUusario.setEmailUsuario(savePagamento.getEmail());
-                 
-                  pagamentoRepository.save(savePagamento);
+                  
                   CloseableHttpClient httpClient = HttpClients.createDefault();
                   HttpGet request = new HttpGet("https://api.mercadopago.com/v1/payments/"+payment.getId()+"");
 
@@ -141,8 +133,22 @@ public class PagamentoController {
                       }
           
                   }
-          
-                  
+                  int numeroSorteio = RetornaNumeroSorteado();
+                  Pagamento savePagamento = pagamentoForms.converter();
+                  savePagamento.setNumeroComprado(numeroSorteio);
+                  savePagamento.setStatus_pagamento(payment.getStatusDetail());
+                  DadosUusario dadosUusario = new DadosUusario();
+                  dadosUusario.setNumero(numeroSorteio);
+                  dadosUusario.setEmailUsuario(savePagamento.getEmail());
+                  savePagamento.setTelefone(pagamentoForms.getTelefone());
+                  savePagamento.setId_transacao(payment.getId());
+                  pagamentoRepository.save(savePagamento);
+
+                  DadosUusario user = new DadosUusario();
+                  user.emailUsuario =pagamentoForms.getEmail();
+                  user.numero=numeroSorteio;
+                  enviaEmail(user);
+
                  return Answer;
                  
 
@@ -151,40 +157,61 @@ public class PagamentoController {
 
             } catch (MPException e) {
                 // TODO Auto-generated catch block
-             
-                return "Erro ao Processar o pix";
+                e.printStackTrace();
+                return "Erro ou processar boleto, tente mais tarde";
             }
 
         }
         if (payment.getPaymentMethodId().toString().toUpperCase().contains("MASTER")
-                || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")
-                || payment.getPaymentMethodId().toString().toUpperCase().contains("AMEX")
-                || payment.getPaymentMethodId().toString().toUpperCase().contains("ELO")) {
-            try {
-                payment.save();
-                if (payment.getStatus() != null && payment.getStatus().toString().toLowerCase().contains("approved")) {
-                    int numeroSorteio = RetornaNumeroSorteado();
-                    Pagamento savePagamento = pagamentoForms.converter();
-                    savePagamento.setNumeroComprado(numeroSorteio);
-                    savePagamento.setStatus_pagamento(payment.getStatus().toString().toLowerCase());
+        || payment.getPaymentMethodId().toString().toUpperCase().contains("VISA")
+        || payment.getPaymentMethodId().toString().toUpperCase().contains("AMEX")
+        || payment.getPaymentMethodId().toString().toUpperCase().contains("ELO")) {
+    try {
+        payment.save();
+        System.out.println(payment.getStatus());
+        if(payment.getStatus() != null){
+        if (!payment.getStatus().toString().toLowerCase().contains("rejected")) {
+         
+            int numeroSorteio = RetornaNumeroSorteado();
+            Pagamento savePagamento = pagamentoForms.converter();
+            savePagamento.setNumeroComprado(numeroSorteio);
+            savePagamento.setStatus_pagamento(payment.getStatusDetail());
+            DadosUusario dadosUusario = new DadosUusario();
+            dadosUusario.setNumero(numeroSorteio);
+            dadosUusario.setEmailUsuario(savePagamento.getEmail());
+            savePagamento.setTelefone(pagamentoForms.getTelefone());
+            savePagamento.setId_transacao(payment.getId());
+           
 
-                    pagamentoRepository.save(savePagamento);
+            // cria um JSONArray e preenche com valores string
+            JSONObject my_obj = new JSONObject();
 
-                    // cria um JSONArray e preenche com valores string
-                    JSONObject my_obj = new JSONObject();
+            my_obj.put("numero", numeroSorteio);
+            my_obj.put("status", payment.getStatus().toString());
 
-                    my_obj.put("numero", numeroSorteio);
-                    my_obj.put("status", payment.getStatus().toString());
-                }
-            } catch (MPException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return "Erro ou processar pagamento, tente mais tarde";
-            }
-
+            // serializa para uma string e imprime
+            pagamentoRepository.save(savePagamento);
+            DadosUusario user = new DadosUusario();
+            user.emailUsuario =pagamentoForms.getEmail();
+            user.numero=numeroSorteio;
+            enviaEmail(user);
+            return my_obj.toString();
+        } else {
+            return payment.getStatus().toString();
         }
-   
+    }else{
+        return "Erro ao processar pagamento por cartão";
+    }
+    } catch (MPException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
 
+        return e.getMessage();
+    }
+    // return payment.getCallbackUrl();
+}
+return "Erro ao processar pagamento por cartão";
+}
     @GetMapping
     public int RetornaNumeroSorteado() {
 
@@ -221,7 +248,7 @@ public class PagamentoController {
 
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, true);
-            helper.setFrom("larissacarvalho887@gmail.com");
+            helper.setFrom("sorteiosdanialves@gmail.com");
             helper.setTo(dadosUusario.emailUsuario);
             helper.setSubject("Sorteio Jogador Daniel Alves");
             String htmlText = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
@@ -433,7 +460,8 @@ public class PagamentoController {
                     "\n" +
                     "                            <div style=\"line-height: 35px\">\n" +
                     "\n" +
-                    "                               Olá " + dadosUusario.emailUsuario + " seu número de sorteio é o " + dadosUusario.numero + " valendo uma camiseta autografada pelo Daniel Alves" +
+                    "                               Olá " + dadosUusario.emailUsuario + " seu número de sorteio é o " + dadosUusario.numero + " valendo uma camiseta autografada pelo Daniel Alves </br>" +
+                    "                               OBS: Em caso de compra por pix, seu número só sera validado mediante confirmação de pagamento. </br>" +
                     " <span style=\"color: #5caad2;\"> Boa Sorte!! </span>\n " +
                     "\n" +
                     "                            </div>\n" +

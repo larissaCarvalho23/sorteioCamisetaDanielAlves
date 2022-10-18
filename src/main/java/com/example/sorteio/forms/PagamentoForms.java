@@ -14,6 +14,43 @@ public class PagamentoForms {
 	private String status_pagamento;
 	private String name;
 	private String lastname;
+	private String telefone;
+	private String id_transacao;
+
+
+	public String getId_transacao() {
+		return id_transacao;
+	}
+
+
+
+
+
+
+	public void setId_transacao(String id_transacao) {
+		this.id_transacao = id_transacao;
+	}
+
+
+
+
+
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+
+
+
+
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+
+
 
 
 
@@ -253,7 +290,7 @@ public class PagamentoForms {
 
 	public  Pagamento converter() {
 		// TODO Auto-generated method stub
-		return new Pagamento(transactionAmount, token, description ,installments ,paymentMethodId ,docType ,docNumber ,email, status_pagamento,name,lastname);
+		return new Pagamento(transactionAmount, token, description ,installments ,paymentMethodId ,docType ,docNumber ,email, status_pagamento,name,lastname,telefone,id_transacao);
 	}
 
 }
