@@ -96,7 +96,7 @@ public class PagamentoController {
                   HttpGet request = new HttpGet("https://api.mercadopago.com/v1/payments/"+payment.getId()+"");
 
                   // add request headers
-                  request.addHeader("Authorization", "Bearer TEST-3209866243427991-101516-9ab38146753d03668d94d996f62007cb-211142859");
+                  request.addHeader("Authorization", "Bearer APP_USR-3463030374526538-022318-f50ce6994e1dc084d9287755a691bb7b-717750861");
                   request.addHeader("Content-Type", "application/json");
           
                   try (CloseableHttpResponse response = httpClient.execute(request)) {
